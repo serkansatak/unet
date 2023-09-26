@@ -92,32 +92,6 @@ class ModelTrainer(object):
                     f"{os.path.join(self.config.general.save_path,f'{self.config.general.model_name}_{epoch+1}.pth')}",
                 )
 
-        # Training loop (assuming you have a DataLoader for your dataset)
-        for epoch in range(self.config.training.num_epochs):
-            for data in self.config.dataloader.train:
-                inputs, targets = data
-
-                # Zero the parameter gradients
-                optimizer.zero_grad()
-                # Forward pass
-                outputs = model(inputs)
-                # Compute the loss
-                loss = criterion(outputs, targets)
-                print(loss)
-                # Backpropagation and optimization
-                loss.backward()
-                optimizer.step()
-            # Print the loss for this epoch
-            print(
-                f"Epoch [{epoch+1}/{self.config.training.num_epochs}], Loss: {loss.item():.4f}"
-            )
-
-            # Save the model
-            if self.config.general.save_model:
-                torch.save(
-                    model.state_dict(),
-                    f"{os.path.join(self.config.general.save_path,f'{self.config.general.model_name}_{epoch+1}.pth')}",
-                )
         print("Finished Training")
 
     @staticmethod
