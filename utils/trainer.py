@@ -4,6 +4,7 @@ import torch.nn as nn
 from utils.config import Config
 from tqdm import tqdm
 
+
 class ModelTrainer(object):
     """
     ModelTrainer class encapsulates all the logic necessary for training the model
@@ -33,7 +34,9 @@ class ModelTrainer(object):
         else:
             model.apply(ModelTrainer.init_kaiming_normal)
 
-        model.to(self.config.general.device) # Move the model to the device specified in the config file
+        model.to(
+            self.config.general.device
+        )  # Move the model to the device specified in the config file
 
         if self.config.training.optimizer == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=self.config.training.lr)
@@ -46,10 +49,13 @@ class ModelTrainer(object):
             )
         else:
             raise ValueError("Unknown optimizer")
-        
+
         for epoch in range(self.config.training.num_epochs):
             model.train()
-            with tqdm(total=len(self.config.dataloader.train), desc=f'Epoch {epoch+1}/{self.config.training.num_epochs}') as pbar:
+            with tqdm(
+                total=len(self.config.dataloader.train),
+                desc=f"Epoch {epoch+1}/{self.config.training.num_epochs}",
+            ) as pbar:
                 for batch in self.config.dataloader.train:
                     inputs, targets = batch
                     # Zero the parameter gradients
@@ -64,14 +70,17 @@ class ModelTrainer(object):
                     optimizer.step()
                     # Update the progress bar
                     pbar.update(1)
-                    pbar.set_postfix({'Training Loss': loss.item()})
-            with tqdm(total=len(self.config.dataloader.val), desc=f'Epoch {epoch+1}/{self.config.training.num_epochs}') as pbar: 
+                    pbar.set_postfix({"Training Loss": loss.item()})
+            with tqdm(
+                total=len(self.config.dataloader.val),
+                desc=f"Epoch {epoch+1}/{self.config.training.num_epochs}",
+            ) as pbar:
                 for batch in self.config.dataloader.val:
                     inputs, targets = batch
                     outputs = model(inputs)
                     loss = criterion(outputs, targets)
-                    pbar.set_postfix({'Validation Loss': loss.item()})
-                
+                    pbar.set_postfix({"Validation Loss": loss.item()})
+
             print(
                 f"Epoch [{epoch+1}/{self.config.training.num_epochs}], Loss: {loss.item():.4f}"
             )

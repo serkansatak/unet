@@ -27,9 +27,6 @@ class BaseDataset(Dataset):
         return len(self.lq_files)
 
     def __getitem__(self, index):
-        return self.transform(
-                    Image.open(self.lq_files[index])
-                ), \
-               self.transform(
-                    Image.open(self.gt_files[index])
-                )
+        return self.transform(Image.open(self.lq_files[index])), self.transform(
+            Image.open(self.gt_files[index])
+        )
