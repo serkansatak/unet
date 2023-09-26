@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import random_split, DataLoader
 from torchvision import transforms
 import torch.nn as nn
+import torch
 
 from utils.dataset import BaseDataset
 from utils.model import UNet
@@ -66,6 +67,7 @@ class GeneralConfig:
     model: nn.Module = UNet
     checkpoint: str | None = None
     mode: str = "train"
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 @dataclass
