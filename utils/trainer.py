@@ -34,9 +34,9 @@ class ModelTrainer(object):
         else:
             model.apply(ModelTrainer.init_kaiming_normal)
 
-        model.to(
-            self.config.general.device
-        )  # Move the model to the device specified in the config file
+        device = torch.device(self.config.general.device)
+
+        model.to(device)  # Move the model to the device specified in the config file
 
         if self.config.training.optimizer == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=self.config.training.lr)
@@ -58,6 +58,7 @@ class ModelTrainer(object):
             ) as pbar:
                 for batch in self.config.dataloader.train:
                     inputs, targets = batch
+                    inputs, targets = inputs.to(device), targets.to(device)
                     # Zero the parameter gradients
                     optimizer.zero_grad()
                     # Forward pass
@@ -77,6 +78,7 @@ class ModelTrainer(object):
             ) as pbar:
                 for batch in self.config.dataloader.val:
                     inputs, targets = batch
+                    inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
                     loss = criterion(outputs, targets)
                     pbar.set_postfix({"Validation Loss": loss.item()})
