@@ -14,7 +14,7 @@ from typing import Literal
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--data",
-    choices=Literal["msrb", "none"],
+    choices=["msrb", "none"],
     type=str,
     required=True,
     help="msrb or none",
