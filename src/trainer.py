@@ -1,8 +1,8 @@
 import os
 import torch
 import torch.nn as nn
-from utils.config import Config
-from utils.utils import save_tensor_images
+from src.config import Config
+from src.utils import save_tensor_images
 from tqdm import tqdm
 from torcheval.metrics.image import PeakSignalNoiseRatio
 from PIL import Image

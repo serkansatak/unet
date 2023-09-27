@@ -1,4 +1,4 @@
-from utils import Config, ModelTrainer, BaseDataset, UNet
+from src import Config, ModelTrainer, BaseDataset, UNet
 import prettyprinter as pp
 
 

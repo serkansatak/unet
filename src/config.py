@@ -6,8 +6,8 @@ from torchvision import transforms
 import torch.nn as nn
 import torch
 
-from utils.dataset import BaseDataset
-from utils.model import UNet
+from src.dataset import BaseDataset
+from src.model import UNet
 
 
 """
