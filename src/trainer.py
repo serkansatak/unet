@@ -154,7 +154,9 @@ class ModelTrainer(object):
 
     def save_reference_image(self, epoch):
         if self.config.dataset.reference_image:
-            input = transforms.ToTensor(
+            transform = self.config.dataset.transform
+
+            input = transform(
                 Image.open(
                     os.path.join(
                         self.config.dataset.path,
@@ -164,7 +166,7 @@ class ModelTrainer(object):
                 )
             )
             output = self.model(input)
-            target = transforms.ToTensor(
+            target = transform(
                 Image.open(
                     os.path.join(
                         self.config.dataset.path,
