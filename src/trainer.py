@@ -198,4 +198,21 @@ class ModelTrainer(object):
                 self.config.general.image_save_path, f"{epoch+1}.png"
             )
 
-            save_tensor_images(input, output, target, save_path)
+            save_tensor_images(
+                input.reshape(
+                    self.config.dataset.input_channels,
+                    self.config.dataset.image_size,
+                    self.config.dataset.image_size,
+                ),
+                output.reshape(
+                    self.config.dataset.input_channels,
+                    self.config.dataset.image_size,
+                    self.config.dataset.image_size,
+                ),
+                target.reshape(
+                    self.config.dataset.input_channels,
+                    self.config.dataset.image_size,
+                    self.config.dataset.image_size,
+                ),
+                save_path,
+            )
