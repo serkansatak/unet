@@ -40,7 +40,7 @@ class DatasetConfig:
 
 @dataclass
 class DataLoaderConfig:
-    batch_size: int = 32
+    batch_size: int = 16
     num_workers: int = 4
     shuffle: bool = True
     train: DataLoader = None
