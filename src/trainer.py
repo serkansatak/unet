@@ -90,7 +90,9 @@ class ModelTrainer(object):
                     total_psnr += psnr_score
                     # Update the progress bar
                     pbar.update(1)
-                    pbar.set_postfix({"Training Loss": loss.item()})
+                    pbar.set_postfix(
+                        {"Training Loss": loss.item(), "PSNR": psnr_score()}
+                    )
                 average_psnr = total_psnr / len(self.config.dataloader.train)
                 pbar.set_postfix(
                     {"Training Loss": total_loss, "Average Training PSNR": average_psnr}
@@ -112,7 +114,7 @@ class ModelTrainer(object):
                     val_total_psnr += psnr_score
 
                     pbar.set_postfix(
-                        {"Validation Loss": loss.item(), "PSNR": psnr.value()}
+                        {"Validation Loss": loss.item(), "PSNR": psnr_score()}
                     )
                 average_val_psnr = val_total_psnr / len(self.config.dataloader.val)
                 pbar.set_postfix(
