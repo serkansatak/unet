@@ -174,7 +174,7 @@ class ModelTrainer(object):
                         self.config.dataset.reference_image,
                     )
                 )
-            )
+            ).to(self.device)
             output = self.model(input)
             target = transform(
                 Image.open(
@@ -184,7 +184,7 @@ class ModelTrainer(object):
                         self.config.dataset.reference_image,
                     )
                 )
-            )
+            ).to(self.device)
 
             save_path = os.path.join(
                 self.config.general.image_save_path, f"{epoch+1}.png"
