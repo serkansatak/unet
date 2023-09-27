@@ -15,10 +15,46 @@ class ModelTrainer(object):
     ModelTrainer class encapsulates all the logic necessary for training the model
     """
 
+    model: nn.Module
+    criterion: nn.Module
+    logger: SummaryWriter
+    device: str
+    optimizer: torch.optim.Optimizer
+
     def __init__(self, config: Config):
         self.config = config
-        self.model = self.config.general.model
         self.logger = SummaryWriter(self.config.general.log_dir)
+
+        self.criterion = self.config.training.criterion
+
+        self.model = self.config.general.model(
+            self.config.dataset.input_channels, self.config.dataset.output_channels
+        )
+
+        if self.config.general.checkpoint:
+            self.model.load_state_dict(torch.load(self.config.general.checkpoint))
+        else:
+            self.model.apply(ModelTrainer.init_kaiming_normal)
+
+        self.device = torch.device(self.config.general.device)
+
+        self.model.to(
+            self.device
+        )  # Move the model to the device specified in the config file
+
+        if self.config.training.optimizer == "adam":
+            self.optimizer = torch.optim.Adam(
+                self.model.parameters(), lr=self.config.training.lr
+            )
+        elif self.config.training.optimizer == "sgd":
+            self.optimizer = torch.optim.SGD(
+                self.model.parameters(),
+                lr=self.config.training.lr,
+                momentum=self.config.training.momentum,
+                weight_decay=self.config.training.weight_decay,
+            )
+        else:
+            raise ValueError("Unknown optimizer")
 
     def train(self):
         """
@@ -31,33 +67,7 @@ class ModelTrainer(object):
 
         print("Starting Training")
 
-        criterion = self.config.training.criterion
         psnr = PeakSignalNoiseRatio()
-
-        model = self.config.general.model(
-            self.config.dataset.input_channels, self.config.dataset.output_channels
-        )
-
-        if self.config.general.checkpoint:
-            model.load_state_dict(torch.load(self.config.general.checkpoint))
-        else:
-            model.apply(ModelTrainer.init_kaiming_normal)
-
-        device = torch.device(self.config.general.device)
-
-        model.to(device)  # Move the model to the device specified in the config file
-
-        if self.config.training.optimizer == "adam":
-            optimizer = torch.optim.Adam(model.parameters(), lr=self.config.training.lr)
-        elif self.config.training.optimizer == "sgd":
-            optimizer = torch.optim.SGD(
-                model.parameters(),
-                lr=self.config.training.lr,
-                momentum=self.config.training.momentum,
-                weight_decay=self.config.training.weight_decay,
-            )
-        else:
-            raise ValueError("Unknown optimizer")
 
         for epoch in range(self.config.training.num_epochs):
             total_loss = 0
@@ -66,25 +76,25 @@ class ModelTrainer(object):
             val_total_psnr = 0
 
             # Train the model
-            model.train()
+            self.model.train()
             with tqdm(
                 total=len(self.config.dataloader.train),
                 desc=f"Epoch {epoch+1}/{self.config.training.num_epochs}",
             ) as pbar:
                 for batch in self.config.dataloader.train:
                     inputs, targets = batch
-                    inputs, targets = inputs.to(device), targets.to(device)
+                    inputs, targets = inputs.to(self.device), targets.to(self.device)
                     # Zero the parameter gradients
-                    optimizer.zero_grad()
+                    self.optimizer.zero_grad()
                     # Forward pass
-                    outputs = model(inputs)
+                    outputs = self.model(inputs)
                     # Compute the loss
-                    loss = criterion(outputs, targets)
+                    loss = self.criterion(outputs, targets)
                     # Backpropagation and optimization
                     loss.backward()
                     total_loss += loss.item()
                     # Update the parameters
-                    optimizer.step()
+                    self.optimizer.step()
                     # Compute the PSNR
                     psnr_score = psnr.update(outputs, targets).compute()
                     total_psnr += psnr_score
@@ -97,16 +107,16 @@ class ModelTrainer(object):
                 )
 
             # Validation
-            model.eval()
+            self.model.eval()
             with tqdm(
                 total=len(self.config.dataloader.val),
                 desc=f"Epoch {epoch+1}/{self.config.training.num_epochs}",
             ) as pbar:
                 for batch in self.config.dataloader.val:
                     inputs, targets = batch
-                    inputs, targets = inputs.to(device), targets.to(device)
-                    outputs = model(inputs)
-                    loss = criterion(outputs, targets)
+                    inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    outputs = self.model(inputs)
+                    loss = self.criterion(outputs, targets)
                     val_total_loss += loss.item()
                     psnr_score = psnr.update(outputs, targets).compute()
                     val_total_psnr += psnr_score
@@ -141,7 +151,7 @@ class ModelTrainer(object):
             # Save the model
             if self.config.general.save_model:
                 torch.save(
-                    model.state_dict(),
+                    self.model.state_dict(),
                     f"{os.path.join(self.config.general.model_save_path,f'{self.config.general.model_name}_{epoch+1}.pth')}",
                 )
 
