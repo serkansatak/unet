@@ -166,25 +166,33 @@ class ModelTrainer(object):
         if self.config.dataset.reference_image:
             transform = self.config.dataset.transform
 
-            input = transform(
-                Image.open(
-                    os.path.join(
-                        self.config.dataset.path,
-                        self.config.dataset.lq_folder,
-                        self.config.dataset.reference_image,
+            input = (
+                transform(
+                    Image.open(
+                        os.path.join(
+                            self.config.dataset.path,
+                            self.config.dataset.lq_folder,
+                            self.config.dataset.reference_image,
+                        )
                     )
                 )
-            ).to(self.device)
+                .to(self.device)
+                .unsqueeze(0)
+            )
             output = self.model(input)
-            target = transform(
-                Image.open(
-                    os.path.join(
-                        self.config.dataset.path,
-                        self.config.dataset.gt_folder,
-                        self.config.dataset.reference_image,
+            target = (
+                transform(
+                    Image.open(
+                        os.path.join(
+                            self.config.dataset.path,
+                            self.config.dataset.gt_folder,
+                            self.config.dataset.reference_image,
+                        )
                     )
                 )
-            ).to(self.device)
+                .to(self.device)
+                .unsqueeze(0)
+            )
 
             save_path = os.path.join(
                 self.config.general.image_save_path, f"{epoch+1}.png"
