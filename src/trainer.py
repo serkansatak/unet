@@ -136,7 +136,7 @@ class ModelTrainer(object):
 
             if self.config.dataset.reference_image:
                 # Save the reference image
-                self.save_reference_image()
+                self.save_reference_image(epoch)
 
             # Save the model
             if self.config.general.save_model:
