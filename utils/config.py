@@ -20,6 +20,8 @@ No need for extra yaml files or json files. Everything is stored in a single fil
 @dataclass
 class DatasetConfig:
     path: str = "data"
+    gt_folder: str = "gt"
+    lq_folder: str = "lq"
     random_split: bool = True
     train_size: float = 0.8
     val_size: float = 0.2
@@ -36,6 +38,7 @@ class DatasetConfig:
     test_dataset: BaseDataset = None
     input_channels: int = 3
     output_channels: int = 3
+    reference_image: str | None = "36006812.png"
 
 
 @dataclass
@@ -62,12 +65,14 @@ class TrainingConfig:
 class GeneralConfig:
     seed: int = 42
     save_model: bool = True
-    save_path: str = "./models"
+    model_save_path: str = "./models"
+    image_save_path: str = "./images"
     model_name: str = "unet_marine_snow"
     model: nn.Module = UNet
     checkpoint: str | None = None
     mode: str = "train"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    log_dir: str = "./logs"
 
 
 @dataclass
@@ -80,7 +85,10 @@ class Config:
     def __post_init__(self):
         if self.general.mode == "train":
             self.dataset.train_dataset = BaseDataset(
-                self.dataset.path, self.dataset.transform
+                self.dataset.path,
+                self.dataset.gt_folder,
+                self.dataset.lq_folder,
+                self.dataset.transform,
             )
 
             if self.dataset.random_split:
@@ -98,7 +106,10 @@ class Config:
 
         if self.general.mode == "test":
             self.dataset.test_dataset = BaseDataset(
-                self.dataset.path, self.dataset.transform
+                self.dataset.path,
+                self.dataset.gt_folder,
+                self.dataset.lq_folder,
+                self.dataset.transform,
             )
 
         if self.general.mode == "train":
@@ -121,3 +132,15 @@ class Config:
                 shuffle=self.dataloader.shuffle,
                 num_workers=self.dataloader.num_workers,
             )
+
+    def to_dict(self):
+        general_dict = self.general.__dict__
+        training_dict = self.training.__dict__
+        dataset_dict = self.dataset.__dict__
+        dataloader_dict = self.dataloader.__dict__
+        return {
+            "general": general_dict,
+            "training": training_dict,
+            "dataset": dataset_dict,
+            "dataloader": dataloader_dict,
+        }

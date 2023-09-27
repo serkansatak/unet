@@ -16,7 +16,7 @@ class BaseDataset(Dataset):
 
     """
 
-    def __init__(self, folder_path, transform=None):
+    def __init__(self, folder_path, gt_folder, lq_folder, transform=None):
         self.gt = os.path.join(folder_path, "gt")
         self.lq = os.path.join(folder_path, "lq")
         self.gt_files = sorted(glob.glob(os.path.join(self.gt, "*")))

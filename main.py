@@ -1,8 +1,11 @@
 from utils import Config, ModelTrainer, BaseDataset, UNet
+import prettyprinter as pp
 
 
 def main():
     config = Config()
+
+    pp.pprint(config.to_dict())
 
     if config.general.mode == "train":
         model_trainer = ModelTrainer(config)
