@@ -58,7 +58,7 @@ class TrainingConfig:
     lr: float = 0.001
     momentum: float = 0.9
     weight_decay: float = 0.0001
-    num_epochs: int = 30
+    num_epochs: int = 500
 
 
 @dataclass
