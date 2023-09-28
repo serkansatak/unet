@@ -2,6 +2,7 @@ from PIL import Image
 import torchvision.transforms.functional as F
 from typing import List
 import torch
+from torchvision import transforms
 
 
 def save_tensor_images(tensor_list: List[torch.Tensor], save_path):

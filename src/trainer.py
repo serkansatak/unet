@@ -202,26 +202,20 @@ class ModelTrainer(object):
 
             save_tensor_images(
                 [
-                    inverse_normalize(
-                        input.reshape(
-                            self.config.dataset.input_channels,
-                            self.config.dataset.image_size,
-                            self.config.dataset.image_size,
-                        )
+                    input.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
                     ),
-                    inverse_normalize(
-                        output.reshape(
-                            self.config.dataset.input_channels,
-                            self.config.dataset.image_size,
-                            self.config.dataset.image_size,
-                        )
+                    output.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
                     ),
-                    inverse_normalize(
-                        target.reshape(
-                            self.config.dataset.input_channels,
-                            self.config.dataset.image_size,
-                            self.config.dataset.image_size,
-                        )
+                    target.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
                     ),
                 ],
                 save_path,

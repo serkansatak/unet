@@ -84,7 +84,7 @@ class GeneralConfig:
     model_name: str = "unet_marine_snow"
     model: nn.Module = UNet
     checkpoint: str | None = None  # "./models/pretrained.pth"
-    mode: str = "train"
+    mode: str = "train"  # "train" or "test"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     log_dir: str = "./logs"
     single_test_file: str | None = "./data/lq/2450682.png"
