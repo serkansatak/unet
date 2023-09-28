@@ -1,13 +1,13 @@
 import os
 import torch
 import torch.nn as nn
-from src.config import Config
-from src.utils import save_tensor_images
 from tqdm import tqdm
 from torcheval.metrics.image import PeakSignalNoiseRatio
 from PIL import Image
-from torchvision import transforms
 from torch.utils.tensorboard import SummaryWriter
+
+from src.config import Config
+from src.utils import save_tensor_images
 
 
 class ModelTrainer(object):
@@ -199,20 +199,22 @@ class ModelTrainer(object):
             )
 
             save_tensor_images(
-                input.reshape(
-                    self.config.dataset.input_channels,
-                    self.config.dataset.image_size,
-                    self.config.dataset.image_size,
-                ),
-                output.reshape(
-                    self.config.dataset.input_channels,
-                    self.config.dataset.image_size,
-                    self.config.dataset.image_size,
-                ),
-                target.reshape(
-                    self.config.dataset.input_channels,
-                    self.config.dataset.image_size,
-                    self.config.dataset.image_size,
-                ),
+                [
+                    input.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
+                    ),
+                    output.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
+                    ),
+                    target.reshape(
+                        self.config.dataset.input_channels,
+                        self.config.dataset.image_size,
+                        self.config.dataset.image_size,
+                    ),
+                ],
                 save_path,
             )

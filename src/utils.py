@@ -1,8 +1,10 @@
 from PIL import Image
 import torchvision.transforms.functional as F
+from typing import List
+import torch
 
 
-def save_tensor_images(input_tensor, output_tensor, target_tensor, save_path):
+def save_tensor_images(tensor_list: List[torch.Tensor], save_path):
     """
     Save input, output, and target tensors as a single image.
 
@@ -13,18 +15,18 @@ def save_tensor_images(input_tensor, output_tensor, target_tensor, save_path):
         save_path (str): The file path to save the combined image.
     """
     # Convert tensors to PIL images
-    input_image = F.to_pil_image(input_tensor.cpu())
-    output_image = F.to_pil_image(output_tensor.cpu())
-    target_image = F.to_pil_image(target_tensor.cpu())
+    im_list = []
+    for im in tensor_list:
+        im = F.to_pil_image(im.cpu())
+        im_list.append(im)
 
     # Create a blank canvas to combine the images
-    width, height = input_image.size
+    width, height = im_list[0].size
     combined_image = Image.new("RGB", (width * 3, height))
 
     # Paste input, output, and target images side by side
-    combined_image.paste(input_image, (0, 0))
-    combined_image.paste(output_image, (width, 0))
-    combined_image.paste(target_image, (2 * width, 0))
+    for i, im in enumerate(im_list):
+        combined_image.paste(im, (i * width, 0))
 
     # Save the combined image
     combined_image.save(save_path)
