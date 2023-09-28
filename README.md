@@ -31,12 +31,13 @@ Before feeding images to network images resized to 386x386 and normalized to [0,
 - Python 3.10
 - PyTorch 2.0.1
 - Torchvision 0.15.2
-- TQDM
 - Pillow
 - Torcheval 0.0.7
 - Torchsummary 1.5.1
 - Tensorboard 2.14.0
-- Prettyprinter 0.18.0
+- prettyprinter 0.18.0
+- gdown
+- tqdm
 
 ## Usage
 
