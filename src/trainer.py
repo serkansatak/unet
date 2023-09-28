@@ -7,7 +7,7 @@ from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
 
 from src.config import Config
-from src.utils import save_tensor_images
+from src.utils import inverse_normalize, save_tensor_images
 
 
 class ModelTrainer(object):
@@ -202,20 +202,26 @@ class ModelTrainer(object):
 
             save_tensor_images(
                 [
-                    input.reshape(
-                        self.config.dataset.input_channels,
-                        self.config.dataset.image_size,
-                        self.config.dataset.image_size,
+                    inverse_normalize(
+                        input.reshape(
+                            self.config.dataset.input_channels,
+                            self.config.dataset.image_size,
+                            self.config.dataset.image_size,
+                        )
                     ),
-                    output.reshape(
-                        self.config.dataset.input_channels,
-                        self.config.dataset.image_size,
-                        self.config.dataset.image_size,
+                    inverse_normalize(
+                        output.reshape(
+                            self.config.dataset.input_channels,
+                            self.config.dataset.image_size,
+                            self.config.dataset.image_size,
+                        )
                     ),
-                    target.reshape(
-                        self.config.dataset.input_channels,
-                        self.config.dataset.image_size,
-                        self.config.dataset.image_size,
+                    inverse_normalize(
+                        target.reshape(
+                            self.config.dataset.input_channels,
+                            self.config.dataset.image_size,
+                            self.config.dataset.image_size,
+                        )
                     ),
                 ],
                 save_path,

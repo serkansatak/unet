@@ -30,3 +30,13 @@ def save_tensor_images(tensor_list: List[torch.Tensor], save_path):
 
     # Save the combined image
     combined_image.save(save_path)
+
+
+def inverse_normalize(output_tensor):
+    mean = torch.tensor([0.485, 0.456, 0.406])
+    std = torch.tensor([0.229, 0.224, 0.225])
+
+    # Multiply by standard deviation and add mean
+    denormalized_output = output_tensor * std + mean
+
+    return denormalized_output
