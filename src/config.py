@@ -69,10 +69,11 @@ class GeneralConfig:
     image_save_path: str = "./images"
     model_name: str = "unet_marine_snow"
     model: nn.Module = UNet
-    checkpoint: str | None = None
-    mode: str = "train"
+    checkpoint: str | None = "./models/pretrained.pth"
+    mode: str = "test"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     log_dir: str = "./logs"
+    single_test_file: str | None = "./data/lq/2450682.png"
 
 
 @dataclass
