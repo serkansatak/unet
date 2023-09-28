@@ -32,7 +32,9 @@ class ModelTrainer(object):
         )
 
         if self.config.general.checkpoint:
-            self.model.load_state_dict(torch.load(self.config.general.checkpoint))
+            self.model.load_state_dict(
+                torch.load(self.config.general.checkpoint, map_location=self.device)
+            )
         else:
             self.model.apply(ModelTrainer.init_kaiming_normal)
 

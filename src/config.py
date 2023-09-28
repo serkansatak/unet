@@ -27,17 +27,27 @@ class DatasetConfig:
     val_size: float = 0.2
     test_size: float = 0.2
     image_size: int = 384
-    transform: transforms = transforms.Compose(
-        [
-            transforms.Resize(image_size),
-            transforms.ToTensor(),
-        ]
+    input_channels: int = 3
+    output_channels: int = 3
+    transform: transforms = (
+        transforms.Compose(
+            [
+                transforms.Resize(image_size),
+                transforms.ToTensor(),
+                transforms.Grayscale(num_output_channels=1),
+            ]
+        )
+        if input_channels == 1
+        else transforms.Compose(
+            [
+                transforms.Resize(image_size),
+                transforms.ToTensor(),
+            ]
+        )
     )
     train_dataset: BaseDataset = None
     val_dataset: BaseDataset = None
     test_dataset: BaseDataset = None
-    input_channels: int = 3
-    output_channels: int = 3
     reference_image: str | None = "36006812.png"
 
 
@@ -69,8 +79,8 @@ class GeneralConfig:
     image_save_path: str = "./images"
     model_name: str = "unet_marine_snow"
     model: nn.Module = UNet
-    checkpoint: str | None = "./models/pretrained.pth"
-    mode: str = "test"
+    checkpoint: str | None = None  # "./models/pretrained.pth"
+    mode: str = "train"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     log_dir: str = "./logs"
     single_test_file: str | None = "./data/lq/2450682.png"

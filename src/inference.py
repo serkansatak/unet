@@ -17,11 +17,13 @@ class Tester:
         self.model = self.config.general.model(
             self.config.dataset.input_channels, self.config.dataset.output_channels
         )
-        self.device = self.config.general.device
+        self.device = torch.device(self.config.general.device)
         self.model.to(self.device)
 
         if self.config.general.checkpoint:
-            self.model.load_state_dict(torch.load(self.config.general.checkpoint))
+            self.model.load_state_dict(
+                torch.load(self.config.general.checkpoint, map_location=self.device)
+            )
 
     def test_single(self, image_path: str):
         self.model.eval()
