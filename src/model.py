@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
+from torchsummary import summary
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, padding=1, bias=False):
+    def __init__(self, in_channels, out_channels, kernel_size=3, padding=1, bias=True):
         super().__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(
@@ -74,8 +75,9 @@ class UNet(nn.Module):
         self.decoder1 = DecoderBlock(32, 32, first=True)
         self.decoder2 = DecoderBlock(64, 64)
         self.decoder3 = DecoderBlock(96, 64)
+        self.decoder4 = DecoderBlock(96, 64)
         self.last = nn.Sequential(
-            nn.Conv2d(64, out_channels, kernel_size=3, padding=1, bias=False),
+            nn.Conv2d(64, out_channels, kernel_size=3, padding=1, bias=True),
             nn.BatchNorm2d(out_channels),
             nn.LeakyReLU(inplace=True),
         )
@@ -88,10 +90,11 @@ class UNet(nn.Module):
         x5 = self.encoder(x4)
         x6 = self.encoder(x5)
         x = self.decoder1(x6)
-        x = self.decoder2(torch.cat([x, x5], dim=1))
-        x = self.decoder3(torch.cat([x, x4], dim=1))
-        x = self.decoder3(torch.cat([x, x3], dim=1))
-        x = self.decoder3(torch.cat([x, x2], dim=1))
+        x = self.decoder2(torch.cat([x5, x], dim=1))
+        x = self.decoder3(torch.cat([x4, x], dim=1))
+        x = self.decoder3(torch.cat([x3, x], dim=1))
+        x = self.decoder3(torch.cat([x2, x], dim=1))
+        x = self.decoder4(torch.cat([x1, x], dim=1))
         return self.last(x)
 
 
@@ -111,4 +114,5 @@ if __name__ == "__main__":
     x = torch.randn(1, 3, 384, 384)
     print(model(x).shape)
     print(model)
+    summary(model, (3, 384, 384), device="cpu")
     print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
