@@ -7,7 +7,7 @@ from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
 
 from src.config import Config
-from src.utils import inverse_normalize, save_tensor_images
+from src.utils import save_tensor_images
 
 
 class ModelTrainer(object):

@@ -27,8 +27,8 @@ class DatasetConfig:
     val_size: float = 0.2
     test_size: float = 0.2
     image_size: int = 384
-    input_channels: int = 3
-    output_channels: int = 3
+    input_channels: int = 1
+    output_channels: int = 1
     transform: transforms = (
         transforms.Compose(
             [
@@ -42,10 +42,6 @@ class DatasetConfig:
             [
                 transforms.Resize(image_size),
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],  # ImageNet mean values
-                    std=[0.229, 0.224, 0.225],  # ImageNet standard deviation values
-                ),
             ]
         )
     )
@@ -57,7 +53,7 @@ class DatasetConfig:
 
 @dataclass
 class DataLoaderConfig:
-    batch_size: int = 16
+    batch_size: int = 24
     num_workers: int = 4
     shuffle: bool = True
     train: DataLoader = None
