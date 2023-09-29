@@ -27,8 +27,8 @@ class DatasetConfig:
     val_size: float = 0.2
     test_size: float = 0.2
     image_size: int = 384
-    input_channels: int = 1
-    output_channels: int = 1
+    input_channels: int = 3
+    output_channels: int = 3
     transform: transforms = (
         transforms.Compose(
             [
