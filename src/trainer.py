@@ -29,9 +29,16 @@ class ModelTrainer(object):
         self.criterion = self.config.training.criterion
 
         self.model = self.config.general.model(
-            self.config.dataset.input_channels, self.config.dataset.output_channels,
-            self.config.dataset.batch_norm
+            self.config.dataset.input_channels,
+            self.config.dataset.output_channels,
+            self.config.dataset.batch_norm,
         )
+
+        self.device = torch.device(self.config.general.device)
+
+        self.model.to(
+            self.device
+        )  # Move the model to the device specified in the config file
 
         if self.config.general.checkpoint:
             self.model.load_state_dict(
@@ -39,12 +46,6 @@ class ModelTrainer(object):
             )
         else:
             self.model.apply(ModelTrainer.init_kaiming_normal)
-
-        self.device = torch.device(self.config.general.device)
-
-        self.model.to(
-            self.device
-        )  # Move the model to the device specified in the config file
 
         print("\nModel Summary")
         summary(
