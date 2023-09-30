@@ -4,7 +4,15 @@ from torchsummary import summary
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, padding=1, bias=True, batch_norm=False):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size=3,
+        padding=1,
+        bias=True,
+        batch_norm=False,
+    ):
         super().__init__()
         if batch_norm:
             self.conv = nn.Sequential(
@@ -42,8 +50,8 @@ class DoubleConvBlock(nn.Module):
         if not mid_channels:
             mid_channels = out_channels
         self.double_conv = nn.Sequential(
-            ConvBlock(in_channels, mid_channels, batch_norm=batch_norm), 
-            ConvBlock(mid_channels, out_channels, batch_norm=batch_norm)
+            ConvBlock(in_channels, mid_channels, batch_norm=batch_norm),
+            ConvBlock(mid_channels, out_channels, batch_norm=batch_norm),
         )
 
     def forward(self, x):
@@ -56,8 +64,7 @@ class EncoderBlock(nn.Module):
     def __init__(self, in_channels, out_channels, batch_norm=False):
         super().__init__()
         self.maxpool_conv = nn.Sequential(
-            nn.MaxPool2d(2), 
-            ConvBlock(in_channels, out_channels, batch_norm=batch_norm)
+            nn.MaxPool2d(2), ConvBlock(in_channels, out_channels, batch_norm=batch_norm)
         )
 
     def forward(self, x):
@@ -73,7 +80,9 @@ class DecoderBlock(nn.Module):
         if first:
             self.conv = ConvBlock(in_channels, out_channels, batch_norm=batch_norm)
         else:
-            self.conv = DoubleConvBlock(in_channels, out_channels, batch_norm=batch_norm)
+            self.conv = DoubleConvBlock(
+                in_channels, out_channels, batch_norm=batch_norm
+            )
 
     def forward(self, x):
         x1 = self.conv(x)
@@ -96,25 +105,27 @@ class UNet(nn.Module):
         self.decoder4 = DecoderBlock(96, 64, batch_norm=batch_norm)
         self.decoder5 = DecoderBlock(96, 64, batch_norm=batch_norm)
         self.last = nn.Sequential(
-            DoubleConvBlock(96, 64), # (96, 384, 384) -> (64, 384, 384)
+            DoubleConvBlock(96, 64),  # (96, 384, 384) -> (64, 384, 384)
             nn.Conv2d(64, out_channels, kernel_size=3, padding=1, bias=True),
             # nn.BatchNorm2d(out_channels),
             nn.LeakyReLU(inplace=True),
         )
 
     def forward(self, x0):
-        x1 = self.init_conv(x0) # (in_channels, 384, 384) -> (32, 384, 384)
-        x2 = self.encoder1(x1) # (32, 384, 384) -> (32, 192, 192)
-        x3 = self.encoder2(x2) # (32, 192, 192) -> (32, 96, 96)
-        x4 = self.encoder3(x3) # (32, 96, 96) -> (32, 48, 48)
-        x5 = self.encoder4(x4) # (32, 48, 48) -> (32, 24, 24)
-        x6 = self.encoder5(x5) # (32, 24, 24) -> (32, 12, 12)
-        x = self.decoder1(x6) # (32, 12, 12) -> (32, 24, 24)
-        x = self.decoder2(torch.cat([x5, x], dim=1)) # (64, 24, 24) -> (64, 48, 48)
-        x = self.decoder3(torch.cat([x4, x], dim=1)) # (96, 48, 48) -> (64, 96, 96)
-        x = self.decoder4(torch.cat([x3, x], dim=1)) # (96, 96, 96) -> (64, 192, 192)
-        x = self.decoder5(torch.cat([x2, x], dim=1)) # (96, 192, 192) -> (64, 384, 384)
-        return self.last(torch.cat([x1,x], dim=1)) # (96, 384, 384) -> (out_channels, 384, 384)
+        x1 = self.init_conv(x0)  # (in_channels, 384, 384) -> (32, 384, 384)
+        x2 = self.encoder1(x1)  # (32, 384, 384) -> (32, 192, 192)
+        x3 = self.encoder2(x2)  # (32, 192, 192) -> (32, 96, 96)
+        x4 = self.encoder3(x3)  # (32, 96, 96) -> (32, 48, 48)
+        x5 = self.encoder4(x4)  # (32, 48, 48) -> (32, 24, 24)
+        x6 = self.encoder5(x5)  # (32, 24, 24) -> (32, 12, 12)
+        x = self.decoder1(x6)  # (32, 12, 12) -> (32, 24, 24)
+        x = self.decoder2(torch.cat([x5, x], dim=1))  # (64, 24, 24) -> (64, 48, 48)
+        x = self.decoder3(torch.cat([x4, x], dim=1))  # (96, 48, 48) -> (64, 96, 96)
+        x = self.decoder4(torch.cat([x3, x], dim=1))  # (96, 96, 96) -> (64, 192, 192)
+        x = self.decoder5(torch.cat([x2, x], dim=1))  # (96, 192, 192) -> (64, 384, 384)
+        return self.last(
+            torch.cat([x1, x], dim=1)
+        )  # (96, 384, 384) -> (out_channels, 384, 384)
 
 
 model_map = {

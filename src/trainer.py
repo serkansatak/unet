@@ -5,6 +5,7 @@ from tqdm import tqdm
 from torcheval.metrics.image import PeakSignalNoiseRatio
 from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
+from torchsummary import summary
 
 from src.config import Config
 from src.utils import save_tensor_images
@@ -28,7 +29,8 @@ class ModelTrainer(object):
         self.criterion = self.config.training.criterion
 
         self.model = self.config.general.model(
-            self.config.dataset.input_channels, self.config.dataset.output_channels
+            self.config.dataset.input_channels, self.config.dataset.output_channels,
+            self.config.dataset.batch_norm
         )
 
         if self.config.general.checkpoint:
@@ -43,6 +45,17 @@ class ModelTrainer(object):
         self.model.to(
             self.device
         )  # Move the model to the device specified in the config file
+
+        print("\nModel Summary")
+        summary(
+            self.model,
+            (
+                self.config.dataset.input_channels,
+                self.config.dataset.image_size,
+                self.config.dataset.image_size,
+            ),
+            device=self.config.general.device,
+        )
 
         if self.config.training.optimizer == "adam":
             self.optimizer = torch.optim.Adam(

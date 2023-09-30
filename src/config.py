@@ -29,6 +29,7 @@ class DatasetConfig:
     image_size: int = 384
     input_channels: int = 3
     output_channels: int = 3
+    batch_norm: bool = True
     transform: transforms = (
         transforms.Compose(
             [
