@@ -54,7 +54,7 @@ class DatasetConfig:
 
 @dataclass
 class DataLoaderConfig:
-    batch_size: int = 24
+    batch_size: int = 16
     num_workers: int = 4
     shuffle: bool = True
     train: DataLoader = None
@@ -69,7 +69,7 @@ class TrainingConfig:
     lr: float = 0.001
     momentum: float = 0.9
     weight_decay: float = 0.0001
-    num_epochs: int = 500
+    num_epochs: int = 150
 
 
 @dataclass
