@@ -65,7 +65,7 @@ class DataLoaderConfig:
 class TrainingConfig:
     criterion: str = nn.MSELoss()  # "cross_entropy"
     optimizer: str = "adam"
-    lr: float = 0.001
+    lr: float = 0.0001
     momentum: float = 0.9
     weight_decay: float = 0.0001
     num_epochs: int = 30
