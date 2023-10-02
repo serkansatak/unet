@@ -33,6 +33,7 @@ class DatasetConfig:
         transforms.Compose(
             [
                 transforms.Resize(image_size),
+                transforms.CenterCrop([image_size, image_size]),
                 transforms.ToTensor(),
                 transforms.Grayscale(num_output_channels=1),
             ]
@@ -41,6 +42,7 @@ class DatasetConfig:
         else transforms.Compose(
             [
                 transforms.Resize(image_size),
+                transforms.CenterCrop([image_size, image_size]),
                 transforms.ToTensor(),
             ]
         )
