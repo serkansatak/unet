@@ -19,13 +19,12 @@ No need for extra yaml files or json files. Everything is stored in a single fil
 
 @dataclass
 class DatasetConfig:
-    path: str = "data"
+    path: str = "data/framework_data/train/"
     gt_folder: str = "gt"
     lq_folder: str = "lq"
     random_split: bool = True
-    train_size: float = 0.8
-    val_size: float = 0.2
-    test_size: float = 0.2
+    train_size: float = 0.9
+    val_size: float = 0.1
     image_size: int = 384
     input_channels: int = 3
     output_channels: int = 3
@@ -69,7 +68,7 @@ class TrainingConfig:
     lr: float = 0.001
     momentum: float = 0.9
     weight_decay: float = 0.0001
-    num_epochs: int = 150
+    num_epochs: int = 30
 
 
 @dataclass
