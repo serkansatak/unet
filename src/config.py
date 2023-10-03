@@ -70,7 +70,7 @@ class TrainingConfig:
     scheduler: str = "step"
     step_size: int = 50
     gamma: float = 0.1
-    lr: float = 0.00125
+    lr: float = 0.001
     momentum: float = 0.9
     weight_decay: float = 0.0001
     num_epochs: int = 500
