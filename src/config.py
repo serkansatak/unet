@@ -68,7 +68,7 @@ class TrainingConfig:
     criterion: str = nn.MSELoss()  # "cross_entropy"
     optimizer: str = "adam"
     scheduler: str = "cosine"
-    lr: float = 0.002
+    lr: float = 0.05
     momentum: float = 0.9
     weight_decay: float = 0.0001
     num_epochs: int = 500
