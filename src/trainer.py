@@ -6,6 +6,7 @@ from torcheval.metrics.image import PeakSignalNoiseRatio
 from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
 from torchsummary import summary
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
 from src.config import Config
 from src.utils import save_tensor_images
@@ -74,7 +75,7 @@ class ModelTrainer(object):
             raise ValueError("Unknown optimizer")
 
         if self.config.training.scheduler == "cosine":
-            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            self.scheduler = CosineAnnealingLR(
                 self.optimizer, T_max=self.config.training.num_epochs
             )
         else:
@@ -130,6 +131,8 @@ class ModelTrainer(object):
                 pbar.set_postfix(
                     {"Training Loss": total_loss, "Average Training PSNR": average_psnr}
                 )
+
+            print(f"new learning rate: {self.scheduler.get_last_lr()[-1]}")
 
             # Validation
             self.model.eval()
