@@ -78,6 +78,12 @@ class ModelTrainer(object):
             self.scheduler = CosineAnnealingLR(
                 self.optimizer, T_max=self.config.training.num_epochs
             )
+        elif self.config.training.scheduler == "step":
+            self.scheduler = torch.optim.lr_scheduler.StepLR(
+                self.optimizer,
+                step_size=self.config.training.num_epochs // 3,
+                gamma=self.config.training.gamma,
+            )
         else:
             raise ValueError("Unknown scheduler")
 
