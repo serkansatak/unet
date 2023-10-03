@@ -81,7 +81,7 @@ class ModelTrainer(object):
         elif self.config.training.scheduler == "step":
             self.scheduler = torch.optim.lr_scheduler.StepLR(
                 self.optimizer,
-                step_size=self.config.training.num_epochs // 3,
+                step_size=self.config.training.step_size,
                 gamma=self.config.training.gamma,
             )
         else:
