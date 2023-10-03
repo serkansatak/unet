@@ -21,6 +21,7 @@ class ModelTrainer(object):
     logger: SummaryWriter
     device: str
     optimizer: torch.optim.Optimizer
+    scheduler: torch.optim.lr_scheduler
 
     def __init__(self, config: Config):
         self.config = config
@@ -72,6 +73,13 @@ class ModelTrainer(object):
         else:
             raise ValueError("Unknown optimizer")
 
+        if self.config.training.scheduler == "cosine":
+            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+                self.optimizer, T_max=self.config.training.num_epochs
+            )
+        else:
+            raise ValueError("Unknown scheduler")
+
     def train(self):
         """
         Train the model
@@ -111,6 +119,7 @@ class ModelTrainer(object):
                     total_loss += loss.item()
                     # Update the parameters
                     self.optimizer.step()
+                    self.scheduler.step()
                     # Compute the PSNR
                     psnr_score = psnr.update(outputs, targets).compute()
                     total_psnr += psnr_score

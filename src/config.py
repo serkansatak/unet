@@ -19,12 +19,12 @@ No need for extra yaml files or json files. Everything is stored in a single fil
 
 @dataclass
 class DatasetConfig:
-    path: str = "data/framework_data/train/"
+    path: str = "data/"
     gt_folder: str = "gt"
     lq_folder: str = "lq"
     random_split: bool = True
-    train_size: float = 0.9
-    val_size: float = 0.1
+    train_size: float = 0.98
+    val_size: float = 0.02
     image_size: int = 384
     input_channels: int = 3
     output_channels: int = 3
@@ -67,10 +67,11 @@ class DataLoaderConfig:
 class TrainingConfig:
     criterion: str = nn.MSELoss()  # "cross_entropy"
     optimizer: str = "adam"
-    lr: float = 0.0001
+    scheduler: str = "cosine"
+    lr: float = 0.002
     momentum: float = 0.9
     weight_decay: float = 0.0001
-    num_epochs: int = 30
+    num_epochs: int = 500
 
 
 @dataclass
@@ -81,11 +82,12 @@ class GeneralConfig:
     image_save_path: str = "./images"
     model_name: str = "unet_marine_snow"
     model: nn.Module = UNet
-    checkpoint: str | None = "./models/unet_marine_snow_30.pth"
-    mode: str = "test"  # "train" or "test"
+    checkpoint: str | None = None  # "./models/unet_marine_snow_30.pth"
+    mode: str = "train"  # "train" or "test"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     log_dir: str = "./logs"
-    single_test_file: str | None = "./data/lq/2450682.png"
+    single_test_file: str | None = "./data/test/MSR_Task2/107765387.png"
+    single_test_gt: str | None = "./data/test/original/107765387.png"
 
 
 @dataclass
