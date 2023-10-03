@@ -105,6 +105,7 @@ class ModelTrainer(object):
             total_psnr = 0
             val_total_loss = 0
             val_total_psnr = 0
+            self.scheduler.step()
 
             # Train the model
             self.model.train()
@@ -126,7 +127,6 @@ class ModelTrainer(object):
                     total_loss += loss.item()
                     # Update the parameters
                     self.optimizer.step()
-                    self.scheduler.step()
                     # Compute the PSNR
                     psnr_score = psnr.update(outputs, targets).compute()
                     total_psnr += psnr_score

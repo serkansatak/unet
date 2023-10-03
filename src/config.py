@@ -67,9 +67,9 @@ class DataLoaderConfig:
 class TrainingConfig:
     criterion: str = nn.MSELoss()  # "cross_entropy"
     optimizer: str = "adam"
-    scheduler: str = "step"
+    scheduler: str = "cosine"
     step_size: int = 50
-    gamma: float = 0.1
+    gamma: float = 0.08
     lr: float = 0.001
     momentum: float = 0.9
     weight_decay: float = 0.0001
